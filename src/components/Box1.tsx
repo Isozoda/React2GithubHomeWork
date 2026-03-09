@@ -1,13 +1,12 @@
-import React, { useContext, useState } from 'react'
-import { counterContext } from '../main';
+import React from 'react'
 
 const Box1 = () => {
-    let count = useContext(counterContext)
   return (
     <div>
-      {count}
+      this page is Box1
     </div>
   )
 }
 
 export default Box1
+
