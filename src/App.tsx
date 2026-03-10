@@ -24,7 +24,7 @@ const App = () => {
     },
     onSubmit: (value) => {
       if (idx) {
-        editUser({ id: idx, ...value })
+        editUser({ id: idx, status, ...value })
         resetForm()
         setIdx(null)
         handleCancelE()

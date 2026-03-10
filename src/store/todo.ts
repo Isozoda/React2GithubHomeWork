@@ -56,8 +56,8 @@ export const useToDo = create((set, get) => ({
     })),
   changeStatus: (id: number) =>
     set((state: any) => ({
-      data: state.data.map((e) =>
+      data: state.data.map((e: any) =>
         e.id == id ? { ...e, status: !e.status } : e,
-      ),
+      ),  
     })),
 }));
