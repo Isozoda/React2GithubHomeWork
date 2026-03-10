@@ -1,10 +1,15 @@
-import React from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router'
+import Info from './page/info'
+import Home from './page/Home'
 
 const App = () => {
   return (
-    <div>
-      <h1>Salom2211</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/info/:id' element={<Info />} />
+        <Route index element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
