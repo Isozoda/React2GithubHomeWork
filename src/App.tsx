@@ -18,7 +18,7 @@ const App = () => {
     },
     onSubmit: (value) => {
       if (idx) {
-        dispatch(editUser({ id: idx, ...value }))
+        dispatch(editUser({ id: idx, ...value, status: false }))
         handleCancelE()
         resetForm()
       } else {
