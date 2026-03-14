@@ -1,6 +1,23 @@
 import { create } from "zustand";
 
-export const ToDoListWithZus = create((set, get) => ({
+interface IUser {
+  name: string;
+  age: number;
+  email: string;
+  phone: string;
+  status: boolean;
+  id: number;
+}
+
+export interface IStore {
+  data: IUser[];
+  deleteUser: (id: number) => void;
+  changeStatus: (id: number) => void;
+  addUser: (user: Omit<IUser, "id">) => void;
+  editUser: (obj: IUser) => void;
+}
+
+export const ToDoListWithZus = create<IStore>((set) => ({
   data: [
     {
       id: 1,
@@ -43,11 +60,11 @@ export const ToDoListWithZus = create((set, get) => ({
       status: true,
     },
   ],
-  deleteUser: (id: number) =>
+  deleteUser: (id: number): void =>
     set((state: any) => ({
       data: state.data.filter((e: any) => e.id != id),
     })),
-  changeStatus: (id: number) =>
+  changeStatus: (id: number): void =>
     set((state: any) => ({
       data: state.data.map((e: any) =>
         e.id == id
@@ -71,6 +88,6 @@ export const ToDoListWithZus = create((set, get) => ({
     })),
   editUser: (obj: any) =>
     set((state: any) => ({
-      data: state.data.map((e) => (e.id == obj.id ? obj : e)),
+      data: state.data.map((e: any) => (e.id == obj.id ? obj : e)),
     })),
 }));

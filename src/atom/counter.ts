@@ -46,7 +46,7 @@ export const UserAtom = atom([
 export const deleteUserAtom = atom(null, (get, set, id) => {
   set(
     UserAtom,
-    get(UserAtom).filter((e) => e.id != id),
+    get(UserAtom).filter((e: any) => e.id != id),
   );
 });
 

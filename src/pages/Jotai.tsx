@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Button, Input, Modal, Select } from 'antd';
 import { useAtom } from 'jotai';
 import { AddNewUser, changeStatusAtom, deleteUserAtom, editUserAtom, UserAtom } from '../atom/counter';
@@ -87,7 +87,7 @@ const Jotai = () => {
         setIsModalOpenE(false);
     };
 
-    const handleEdit = (e) => {
+    const handleEdit = (e: any) => {
         setIdx(e.id)
         setFieldValue("name", e.name)
         setFieldValue("age", e.age)
