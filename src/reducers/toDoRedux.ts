@@ -13,7 +13,7 @@ export interface IData {
 }
 
 export interface CounterState {
-  data: IData;
+  data: IData[];
 }
 
 const initialState: CounterState = {
