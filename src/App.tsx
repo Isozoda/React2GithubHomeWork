@@ -1,9 +1,232 @@
-import React from 'react'
+import { Button, Input, Modal } from 'antd';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AddImage, AddUser, apiImage, CheckStatus, DeleteImage, DeleteUser, EditUser, GetData } from './api/todoApi';
+import type { IData, IImg } from './reducers/todoRedux';
+import { useForm, Controller } from "react-hook-form"
 
 const App = () => {
+
+  const { data } = useSelector((state: any) => state.counter)
+
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(GetData())
+  }, [dispatch])
+
+  // edit State
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  // add State
+
+  const [isModalOpenAddUser, setIsModalOpenAddUser] = useState(false);
+
+  const showModalAddUser = () => {
+    setIsModalOpenAddUser(true);
+  };
+
+  const handleOkAddUser = () => {
+    setIsModalOpenAddUser(false);
+  };
+
+  const handleCancelAddUser = () => {
+    setIsModalOpenAddUser(false);
+  };
+
+  //AddImage State
+
+  const [isModalOpenAddImage, setIsModalOpenAddImage] = useState(false);
+
+  const showModalAddImage = () => {
+    setIsModalOpenAddImage(true);
+  };
+
+  const handleOkAddImage = () => {
+    setIsModalOpenAddImage(false);
+  };
+
+  const handleCancelAddImage = () => {
+    setIsModalOpenAddImage(false);
+  };
+
+  const [idx, setIdx] = useState<null | number>(null)
+
+  const { control, handleSubmit, setValue, reset } = useForm({
+    defaultValues: {
+      name: "",
+      description: "",
+      images: []
+    },
+  })
+
+  const onsubmit = (value: any) => {
+    if (idx) {
+      dispatch(EditUser({ id: idx, ...value }))
+      handleCancel()
+      reset()
+    } else {
+      const formdata = new FormData()
+      formdata.append("name", value.name)
+      formdata.append("description", value.description)
+      for (let i = 0; i < value.images.length; i++) {
+        formdata.append("images", value.images[i])
+      }
+      dispatch(AddUser(formdata))
+      handleCancelAddUser()
+      reset()
+    }
+  }
+
+  const onsubmitImage = (value: any) => {
+    const formData = new FormData();
+    for (let i = 0; i < value.images.length; i++) {
+      formData.append("images", value.images[i])
+    }
+    dispatch(AddImage({ id: idx, formData }))
+    handleOkAddImage()
+  }
+
+  const handleEdit = (e: any) => {
+    setIdx(e.id)
+    setValue("name", e.name)
+    setValue("description", e.description)
+  }
+
   return (
-    <div>
-      <h1>Salom2211</h1>
+    <div className="w-[80%] m-auto my-8">
+      <div className="flex items-center mb-8 justify-between">
+        <h1 className="font-bold text-4xl">Users List</h1>
+        <Button type='primary' onClick={showModalAddUser}>+ Add New User</Button>
+      </div>
+      <div className='grid grid-cols-3 gap-10'>
+        {data?.map((e: IData) => {
+          return <div key={e.id} className='shadow p-6 rounded-xl hover:shadow-2xl hover:rounded-4xl transition-all'>
+            {e.images?.map((img: IImg) => {
+              return <div key={img.id}>
+                <img className='w-full h-50' src={`${apiImage}/${img.imageName}`} alt="" />
+                <Button className='my-2' onClick={() => dispatch(DeleteImage(img.id))}>Del Img</Button>
+              </div>
+            })}
+            <Button type='primary' className='my-3' onClick={() => {
+              showModalAddImage()
+              setIdx(e.id)
+            }
+            }>Add Img</Button>
+            <h1 className='font-bold w-[90%] m-auto text-xl mb-2.5'>{e.name}</h1>
+            <h1 className='font-semibold w-[90%] m-auto text-gray-500 mb-3'>{e.description}</h1>
+            {e.isCompleted && (
+              <p className='font-bold bg-green-100 py-1.5 rounded-xl w-[50%] m-auto text-green-500 text-center'>Active</p>
+            )}
+            {!e.isCompleted && (
+              <p className='font-bold bg-red-100 py-1.5 rounded-xl w-[50%] m-auto text-red-500 text-center'>InActive</p>
+            )}
+            <div className='flex items-center mt-3 gap-5 justify-center'>
+              <svg onClick={() => dispatch(DeleteUser(e.id))} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="red" className="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+              </svg>
+              <svg onClick={() => {
+                showModal()
+                handleEdit(e)
+              }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="blue" className="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+              </svg>
+              <input checked={e.isCompleted} onChange={() => dispatch(CheckStatus(e.id))} type="checkbox" className='w-4 h-4' />
+            </div>
+          </div>
+        })}
+      </div>
+      <Modal
+        title="Edit Modal"
+        closable={{ 'aria-label': 'Custom Close Button' }}
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <form onSubmit={handleSubmit(onsubmit)} className='flex flex-col gap-4'>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => <Input placeholder='Name' {...field} />}
+          />
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => <Input placeholder='Description' {...field} />}
+          />
+          <button type='submit' className='bg-blue-500 text-white py-1.5 w-full rounded-xl'>Save</button>
+        </form>
+      </Modal>
+      <Modal
+        title="Add Modal"
+        closable={{ 'aria-label': 'Custom Close Button' }}
+        open={isModalOpenAddUser}
+        onOk={handleOkAddUser}
+        onCancel={handleCancelAddUser}
+        footer={null}
+      >
+        <form onSubmit={handleSubmit(onsubmit)} className='flex flex-col gap-4'>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => <Input placeholder='Name' {...field} />}
+          />
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => <Input placeholder='Description' {...field} />}
+          />
+          <Controller
+            name="images"
+            control={control}
+            render={({ field }) => (
+              <input
+                type="file"
+                multiple
+                onChange={(e) => field.onChange(e.target.files)}
+              />
+            )}
+          />
+          <button type='submit' className='bg-blue-500 text-white py-1.5 w-full rounded-xl'>Save</button>
+        </form>
+      </Modal>
+      <Modal
+        title="Add Image"
+        closable={{ 'aria-label': 'Custom Close Button' }}
+        open={isModalOpenAddImage}
+        onOk={handleOkAddImage}
+        onCancel={handleCancelAddImage}
+        footer={null}
+      >
+        <form onSubmit={handleSubmit(onsubmitImage)} className='flex flex-col gap-4'>
+          <Controller
+            name="images"
+            control={control}
+            render={({ field }) => (
+              <input
+                type="file"
+                multiple
+                onChange={(e) => field.onChange(e.target.files)}
+              />
+            )}
+          />
+          <button type='submit' className='bg-blue-500 text-white py-1.5 w-full rounded-xl'>Save</button>
+        </form>
+      </Modal>
     </div>
   )
 }
