@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { GetData } from "../api/toDoApi";
+import { GetData, InfoData } from "../api/toDoApi";
 
 export interface IImg {
   id: number;
@@ -14,10 +14,12 @@ export interface IData {
 }
 export interface CounterState {
   data: IData[];
+  info: null;
 }
 
 const initialState: CounterState = {
   data: [],
+  info: null,
 };
 
 export const counterSlice = createSlice({
@@ -30,6 +32,9 @@ export const counterSlice = createSlice({
     });
     builder.addCase(GetData.fulfilled, (state, action) => {
       state.data = action.payload;
+    });
+    builder.addCase(InfoData.fulfilled, (state, action) => {
+      state.info = action.payload;
     });
   },
 });
